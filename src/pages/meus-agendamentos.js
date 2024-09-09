@@ -1,10 +1,11 @@
-// src/pages/meus-agendamentos.js (Next.js) ou src/MeusAgendamentos.js (React Puro)
 import React, { useState } from 'react';
 import { Container, Typography, List, ListItem, ListItemText, IconButton, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useRouter } from 'next/router'; // Para navegação
+import Image from 'next/image'; // Importando o Image do Next.js
+import logo from '/public/logo.png'; // Certifique-se de que sua logo está em public/logo.png
 
 export default function MeusAgendamentos() {
   const router = useRouter(); // Para navegação
@@ -32,17 +33,19 @@ export default function MeusAgendamentos() {
   };
 
   const handleReagendarClick = (agendamento) => {
-    // Navegar para a tela de agendamento com dados do agendamento selecionado
     router.push('/agendar');
   };
 
   const handleBack = () => {
-    router.back(); // Volta para a página anterior
+    router.back();
   };
 
   return (
     <Container maxWidth="sm">
       <Box sx={{ textAlign: 'center', marginTop: 4, position: 'relative' }}>
+        {/* Logo */}
+        <Image src={logo} alt="Logo" width={150} height={150} />
+
         <IconButton onClick={handleBack} sx={{ position: 'absolute', top: 16, left: 16 }}>
           <ArrowBackIcon />
         </IconButton>

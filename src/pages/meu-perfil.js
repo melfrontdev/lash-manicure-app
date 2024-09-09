@@ -1,6 +1,5 @@
-// src/pages/meu-perfil.js (Next.js) ou src/MeuPerfil.js (React Puro)
 import React, { useState } from 'react';
-import { Container, Typography, TextField, Button, Box, IconButton } from '@mui/material';
+import { Container, Typography, TextField, Button, Box, IconButton, Avatar } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import LockIcon from '@mui/icons-material/Lock';
@@ -13,6 +12,7 @@ export default function MeuPerfil() {
     email: 'cliente@example.com',
     telefone: '(11) 99999-9999',
     senha: '',
+    foto: '', // URL da foto de perfil
   });
 
   const [editMode, setEditMode] = useState({
@@ -47,6 +47,19 @@ export default function MeuPerfil() {
     router.back(); // Volta para a página anterior
   };
 
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setPerfil({ ...perfil, foto: reader.result });
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <Container maxWidth="sm">
       <Box sx={{ textAlign: 'center', marginTop: 4, position: 'relative' }}>
@@ -56,6 +69,24 @@ export default function MeuPerfil() {
         <Typography variant="h5" gutterBottom>
           Meu Perfil
         </Typography>
+
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
+          <label htmlFor="upload-photo">
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="upload-photo"
+              type="file"
+              onChange={handlePhotoUpload}
+            />
+            <IconButton component="span">
+              <Avatar
+                src={perfil.foto || '/default-profile.png'}
+                sx={{ width: 100, height: 100 }}
+              />
+            </IconButton>
+          </label>
+        </Box>
 
         <Box sx={{ marginBottom: 2 }}>
           <TextField
