@@ -37,7 +37,7 @@ export default function MeusAgendamentos() {
   };
 
   const handleBack = () => {
-    router.back();
+    router.push('/home'); // Redireciona para a tela Home
   };
 
   return (

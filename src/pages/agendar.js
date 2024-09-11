@@ -1,89 +1,98 @@
+// src/pages/agendar.js
 import React, { useState } from 'react';
-import { Container, Box, Typography, IconButton, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, createTheme, ThemeProvider } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { LocalizationProvider, DateCalendar } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { Container, Button, Typography, FormControl, RadioGroup, FormControlLabel, Radio, Box } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'; // Importação necessária
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'; // Adaptador de datas
 import { useRouter } from 'next/router';
-import Image from 'next/image';  // Importando Image do Next.js
-import logo from '/public/logo.png';  // Certifique-se de que sua logo está em public/logo.png
 
-
-const Agendar = () => {
+export default function Agendar() {
+  const [local, setLocal] = useState('');
+  const [servico, setServico] = useState('');
+  const [dataSelecionada, setDataSelecionada] = useState(null);
+  const [etapa, setEtapa] = useState(1); // Etapas: 1 = Escolha Local, 2 = Escolha Serviço, 3 = Calendário, 4 = Confirmação
   const router = useRouter();
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
 
-  const handleOptionChange = (option) => {
-    setSelectedOption(option);
+  const handleLocalChange = (event) => {
+    setLocal(event.target.value);
+    setEtapa(2);
   };
 
-  const handleBack = () => {
-    router.back();
+  const handleServicoChange = (event) => {
+    setServico(event.target.value);
+    setEtapa(3);
   };
 
-  const handleDialogOpen = () => {
-    setOpenDialog(true);
+  const handleDataChange = (newDate) => {
+    setDataSelecionada(newDate);
+    setEtapa(4);
   };
 
-  const handleDialogClose = () => {
-    setOpenDialog(false);
+  const handleConfirmarAgendamento = () => {
+    // Aqui você pode enviar os dados para o backend
+    router.push('/meus-agendamentos');
   };
 
   return (
-    
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Container maxWidth="sm">
-          <Box sx={{ textAlign: 'center', marginTop: 4 }}>
-            {/* Logo */}
-            <Image src={logo} alt="Logo" width={150} height={150} />
+    <Container maxWidth="sm">
+      {etapa === 1 && (
+        <>
+          <Typography variant="h6">Escolha o Local de Atendimento</Typography>
+          <FormControl component="fieldset">
+            <RadioGroup value={local} onChange={handleLocalChange}>
+              <FormControlLabel value="salon" control={<Radio />} label="No Salão" />
+              <FormControlLabel value="home" control={<Radio />} label="A Domicílio" />
+            </RadioGroup>
+          </FormControl>
+        </>
+      )}
 
-            <IconButton onClick={handleBack} sx={{ position: 'absolute', top: 16, left: 16 }}>
-              <ArrowBackIcon />
-            </IconButton>
+      {etapa === 2 && (
+        <>
+          <Typography variant="h6">Escolha o Tipo de Serviço</Typography>
+          <FormControl component="fieldset">
+            <RadioGroup value={servico} onChange={handleServicoChange}>
+              <FormControlLabel value="lashdesign" control={<Radio />} label="Lash Design" />
+              <FormControlLabel value="manicure" control={<Radio />} label="Manicure" />
+              <FormControlLabel value="cabeleireiro" control={<Radio />} label="Cabeleireiro" />
+            </RadioGroup>
+          </FormControl>
+        </>
+      )}
 
-            <Typography variant="h5" gutterBottom>
-              Agendar Horário
-            </Typography>
+      {etapa === 3 && (
+        <>
+          <Typography variant="h6">Selecione uma Data Disponível</Typography>
+          {/* Adicionando LocalizationProvider */}
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              value={dataSelecionada}
+              onChange={handleDataChange}
+              renderInput={(params) => <TextField {...params} fullWidth />}
+            />
+          </LocalizationProvider>
+        </>
+      )}
 
-            <Box>
-              <Button onClick={() => handleOptionChange('salao')} variant="contained" color="primary">
-                Atendimento no Salão
-              </Button>
-              <Button onClick={() => handleOptionChange('domicilio')} variant="contained" color="secondary">
-                Atendimento a Domicílio
-              </Button>
-            </Box>
-
-            {selectedOption && (
-              <Box sx={{ marginTop: 4 }}>
-                <DateCalendar />
-                <Button variant="contained" color="primary" onClick={handleDialogOpen}>
-                  Confirmar
-                </Button>
-                <Dialog open={openDialog} onClose={handleDialogClose}>
-                  <DialogTitle>Confirmar Agendamento</DialogTitle>
-                  <DialogContent>
-                    <DialogContentText>
-                      Você tem certeza que deseja agendar o atendimento para {selectedOption}?
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleDialogClose}>Cancelar</Button>
-                    <Button onClick={() => {
-                      handleDialogClose();
-                      // Adicione lógica para confirmar o agendamento
-                    }} color="primary">
-                      Confirmar
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-              </Box>
-            )}
+      {etapa === 4 && (
+        <>
+          <Typography variant="h6">Confirme as Informações do Agendamento</Typography>
+          <Box>
+            <Typography>Local: {local === 'salon' ? 'No Salão' : 'A Domicílio'}</Typography>
+            <Typography>Serviço: {servico}</Typography>
+            <Typography>Data: {dataSelecionada ? dataSelecionada.toLocaleDateString() : 'Nenhuma data selecionada'}</Typography>
           </Box>
-        </Container>
-      </LocalizationProvider>
-  
+          <Box mt={2}>
+            <Button variant="contained" onClick={handleConfirmarAgendamento}>
+              Confirmar Agendamento
+            </Button>
+            <Button variant="outlined" onClick={() => setEtapa(3)} style={{ marginLeft: '10px' }}>
+              Alterar Data
+            </Button>
+          </Box>
+        </>
+      )}
+    </Container>
   );
-};
+}
 
-export default Agendar;
