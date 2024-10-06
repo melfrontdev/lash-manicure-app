@@ -4,7 +4,8 @@ import { useRouter } from 'next/router';
 
 const Register = () => {
   const router = useRouter();
-  const [name, setName] = useState('');  // Novo campo para o nome
+  const [step, setStep] = useState(1);  // Etapa do registro
+  const [name, setName] = useState('');  
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState({
@@ -19,10 +20,9 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleRegister = () => {
-    // Lógica para registro do usuário
     if (password === confirmPassword) {
       console.log('Register:', {
-        name,   // Incluindo o nome no registro
+        name,
         email,
         phone,
         address,
@@ -32,6 +32,16 @@ const Register = () => {
     } else {
       alert('Senhas não coincidem');
     }
+  };
+
+  // Função para avançar para o próximo passo
+  const handleNext = () => {
+    setStep(prev => prev + 1);
+  };
+
+  // Função para voltar ao passo anterior
+  const handleBack = () => {
+    setStep(prev => prev - 1);
   };
 
   return (
@@ -44,111 +54,186 @@ const Register = () => {
           borderRadius: 2,
           boxShadow: 3,
           backgroundColor: '#fff',
-          maxHeight: '100vh',      // Para garantir que o conteúdo não ultrapasse a altura da tela
-          overflowY: 'auto'        // Permite scroll caso o conteúdo seja maior que a tela
+          maxHeight: '100vh',
+          overflowY: 'auto'
         }}
       >
         <Typography variant="h5" gutterBottom>
           Registrar
         </Typography>
 
-        <TextField
-          label="Nome"
-          type="text"
-          fullWidth
-          margin="normal"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <TextField
-          label="Email"
-          type="email"
-          fullWidth
-          margin="normal"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          label="Telefone (WhatsApp)"
-          type="tel"
-          fullWidth
-          margin="normal"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-        <TextField
-          label="CEP"
-          type="text"
-          fullWidth
-          margin="normal"
-          value={address.cep}
-          onChange={(e) => setAddress({ ...address, cep: e.target.value })}
-        />
-        <TextField
-          label="Rua"
-          type="text"
-          fullWidth
-          margin="normal"
-          value={address.street}
-          onChange={(e) => setAddress({ ...address, street: e.target.value })}
-        />
-        <TextField
-          label="Número"
-          type="text"
-          fullWidth
-          margin="normal"
-          value={address.number}
-          onChange={(e) => setAddress({ ...address, number: e.target.value })}
-        />
-        <TextField
-          label="Bairro"
-          type="text"
-          fullWidth
-          margin="normal"
-          value={address.neighborhood}
-          onChange={(e) => setAddress({ ...address, neighborhood: e.target.value })}
-        />
-        <TextField
-          label="Referência"
-          type="text"
-          fullWidth
-          margin="normal"
-          value={address.reference}
-          onChange={(e) => setAddress({ ...address, reference: e.target.value })}
-        />
-        <TextField
-          label="Cidade"
-          type="text"
-          fullWidth
-          margin="normal"
-          value={address.city}
-          onChange={(e) => setAddress({ ...address, city: e.target.value })}
-        />
-        <TextField
-          label="Senha"
-          type="password"
-          fullWidth
-          margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <TextField
-          label="Confirmar Senha"
-          type="password"
-          fullWidth
-          margin="normal"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ marginTop: 2 }}
-          onClick={handleRegister}
-        >
-          Registrar
-        </Button>
+        {step === 1 && (
+          <>
+            <TextField
+              label="Nome"
+              type="text"
+              fullWidth
+              margin="normal"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ marginTop: 2 }}
+              onClick={handleNext}
+              disabled={!name}  // Desabilitar o botão se o campo estiver vazio
+            >
+              Próximo
+            </Button>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <TextField
+              label="Email"
+              type="email"
+              fullWidth
+              margin="normal"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ marginTop: 2 }}
+              onClick={handleNext}
+              disabled={!email}
+            >
+              Próximo
+            </Button>
+            <Button
+              variant="outlined"
+              fullWidth
+              sx={{ marginTop: 1 }}
+              onClick={handleBack}
+            >
+              Voltar
+            </Button>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <TextField
+              label="Telefone (WhatsApp)"
+              type="tel"
+              fullWidth
+              margin="normal"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ marginTop: 2 }}
+              onClick={handleNext}
+              disabled={!phone}
+            >
+              Próximo
+            </Button>
+            <Button
+              variant="outlined"
+              fullWidth
+              sx={{ marginTop: 1 }}
+              onClick={handleBack}
+            >
+              Voltar
+            </Button>
+          </>
+        )}
+
+        {step === 4 && (
+          <>
+            <TextField
+              label="CEP"
+              type="text"
+              fullWidth
+              margin="normal"
+              value={address.cep}
+              onChange={(e) => setAddress({ ...address, cep: e.target.value })}
+            />
+            <TextField
+              label="Rua"
+              type="text"
+              fullWidth
+              margin="normal"
+              value={address.street}
+              onChange={(e) => setAddress({ ...address, street: e.target.value })}
+            />
+            <TextField
+              label="Número"
+              type="text"
+              fullWidth
+              margin="normal"
+              value={address.number}
+              onChange={(e) => setAddress({ ...address, number: e.target.value })}
+            />
+            {/* Adicionar mais campos de endereço aqui */}
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ marginTop: 2 }}
+              onClick={handleNext}
+              disabled={!address.cep || !address.street || !address.number}
+            >
+              Próximo
+            </Button>
+            <Button
+              variant="outlined"
+              fullWidth
+              sx={{ marginTop: 1 }}
+              onClick={handleBack}
+            >
+              Voltar
+            </Button>
+          </>
+        )}
+
+        {step === 5 && (
+          <>
+            <TextField
+              label="Senha"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <TextField
+              label="Confirmar Senha"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ marginTop: 2 }}
+              onClick={handleRegister}
+              disabled={!password || !confirmPassword || password !== confirmPassword}
+            >
+              Registrar
+            </Button>
+            <Button
+              variant="outlined"
+              fullWidth
+              sx={{ marginTop: 1 }}
+              onClick={handleBack}
+            >
+              Voltar
+            </Button>
+          </>
+        )}
+
         <Grid container justifyContent="center" marginTop={2}>
           <Link href="/login" underline="none">
             Já tem uma conta? Faça login

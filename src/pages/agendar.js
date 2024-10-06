@@ -1,6 +1,5 @@
-// src/pages/agendar.js
 import React, { useState } from 'react';
-import { Container, Button, Typography, FormControl, RadioGroup, FormControlLabel, Radio, Box } from '@mui/material';
+import { Container, Button, Typography, FormControl, RadioGroup, FormControlLabel, Radio, Box, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'; // Importação necessária
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'; // Adaptador de datas
@@ -15,22 +14,35 @@ export default function Agendar() {
 
   const handleLocalChange = (event) => {
     setLocal(event.target.value);
-    setEtapa(2);
   };
 
   const handleServicoChange = (event) => {
     setServico(event.target.value);
-    setEtapa(3);
   };
 
   const handleDataChange = (newDate) => {
     setDataSelecionada(newDate);
-    setEtapa(4);
   };
 
   const handleConfirmarAgendamento = () => {
     // Aqui você pode enviar os dados para o backend
     router.push('/meus-agendamentos');
+  };
+
+  const handleVoltar = () => {
+    if (etapa > 1) {
+      setEtapa(etapa - 1); // Volta para a etapa anterior
+    } else {
+      router.back(); // Volta para a página anterior
+    }
+  };
+
+  const handleProximo = () => {
+    if (etapa === 1 && local) {
+      setEtapa(2);
+    } else if (etapa === 2 && servico) {
+      setEtapa(3);
+    }
   };
 
   return (
@@ -44,6 +56,20 @@ export default function Agendar() {
               <FormControlLabel value="home" control={<Radio />} label="A Domicílio" />
             </RadioGroup>
           </FormControl>
+          <Box mt={2}>
+            <Button variant="contained" onClick={handleProximo} disabled={!local}>
+              Próximo
+            </Button>
+          </Box>
+          {/* Botão de Voltar */}
+      {etapa > 1 && (
+        <Box mt={2}>
+          <Button variant="outlined" onClick={handleVoltar}>
+            Voltar
+          </Button>
+        </Box>
+      )}
+          
         </>
       )}
 
@@ -57,13 +83,17 @@ export default function Agendar() {
               <FormControlLabel value="cabeleireiro" control={<Radio />} label="Cabeleireiro" />
             </RadioGroup>
           </FormControl>
+          <Box mt={2}>
+            <Button variant="contained" onClick={handleProximo} disabled={!servico}>
+              Próximo
+            </Button>
+          </Box>
         </>
       )}
 
       {etapa === 3 && (
         <>
           <Typography variant="h6">Selecione uma Data Disponível</Typography>
-          {/* Adicionando LocalizationProvider */}
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               value={dataSelecionada}
@@ -71,6 +101,11 @@ export default function Agendar() {
               renderInput={(params) => <TextField {...params} fullWidth />}
             />
           </LocalizationProvider>
+          <Box mt={2}>
+            <Button variant="contained" onClick={handleConfirmarAgendamento} disabled={!dataSelecionada}>
+              Confirmar Agendamento
+            </Button>
+          </Box>
         </>
       )}
 
@@ -92,7 +127,15 @@ export default function Agendar() {
           </Box>
         </>
       )}
+
+      {/* Botão de Voltar */}
+      {etapa > 1 && (
+        <Box mt={2}>
+          <Button variant="outlined" onClick={handleVoltar}>
+            Voltar
+          </Button>
+        </Box>
+      )}
     </Container>
   );
 }
-
