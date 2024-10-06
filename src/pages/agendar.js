@@ -34,7 +34,7 @@ export default function Agendar() {
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" className="centered">
       {etapa === 1 && (
         <>
           <Typography variant="h6">Escolha o Local de Atendimento</Typography>

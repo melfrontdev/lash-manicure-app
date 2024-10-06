@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 
 const Register = () => {
   const router = useRouter();
+  const [name, setName] = useState('');  // Novo campo para o nome
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState({
@@ -21,6 +22,7 @@ const Register = () => {
     // Lógica para registro do usuário
     if (password === confirmPassword) {
       console.log('Register:', {
+        name,   // Incluindo o nome no registro
         email,
         phone,
         address,
@@ -41,13 +43,23 @@ const Register = () => {
           padding: 3,
           borderRadius: 2,
           boxShadow: 3,
-          backgroundColor: '#fff'
+          backgroundColor: '#fff',
+          maxHeight: '100vh',      // Para garantir que o conteúdo não ultrapasse a altura da tela
+          overflowY: 'auto'        // Permite scroll caso o conteúdo seja maior que a tela
         }}
       >
         <Typography variant="h5" gutterBottom>
           Registrar
         </Typography>
 
+        <TextField
+          label="Nome"
+          type="text"
+          fullWidth
+          margin="normal"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <TextField
           label="Email"
           type="email"
